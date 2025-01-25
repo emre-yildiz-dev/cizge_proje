@@ -7,6 +7,8 @@
 \usepackage{xcolor}
 \usepackage{amsmath}
 \usepackage{hyperref}
+\usepackage{algorithm}
+\usepackage{algorithmic}
 
 % Code listing settings
 \lstset{
@@ -33,7 +35,7 @@
 \maketitle
 
 \begin{abstract}
-Bu projede, çizge kuramının temel kavramlarını Python programlama dili kullanarak uyguladık. Proje, çizgelerin oluşturulması, analizi ve manipülasyonu için gerekli temel işlevleri içermektedir. Özellikle, tam çizge, döngü çizge, çark çizge ve n-küp çizge gibi özel çizge türlerinin oluşturulması ve analizi için gerekli algoritmalar implement edilmiştir. Projede herhangi bir harici kütüphane kullanılmamıştır.
+Bu projede, çizge kuramının temel kavramlarını Python programlama dili kullanarak uyguladık. Proje, çizgelerin oluşturulması, analizi ve manipülasyonu için gerekli temel işlevleri içermektedir. Özellikle, tam çizge, döngü çizge, çark çizge ve n-küp çizge gibi özel çizge türlerinin oluşturulması ve analizi için gerekli algoritmalar implement edilmiştir. Projede herhangi bir harici kütüphane kullanılmamıştır. Tüm algoritmalar, veri yapıları ve sınıflar sıfırdan geliştirilmiştir.
 \end{abstract}
 
 \tableofcontents
@@ -41,69 +43,175 @@ Bu projede, çizge kuramının temel kavramlarını Python programlama dili kull
 \section{Giriş}
 Çizge kuramı, matematiğin önemli alanlarından biridir ve bilgisayar bilimlerinde geniş uygulama alanına sahiptir. Bu projede, çizge kuramının temel kavramlarını Python programlama dilinde uygulayarak, çizgelerin oluşturulması, analizi ve manipülasyonu için bir yazılım kütüphanesi geliştirdik.
 
-\section{Veri Yapıları}
-Projede kullanılan temel veri yapıları şunlardır:
+\section{Tasarım ve Implementasyon}
 
-\subsection{Tepe (Vertex) Sınıfı}
-Tepe sınıfı, çizgedeki her bir düğümü temsil eder. Her tepenin bir etiketi ve komşu tepeler kümesi vardır. Python'un dataclass özelliği kullanılarak implement edilmiştir (bkz. Ek A.1).
+\subsection{Veri Yapıları}
+Projede iki temel veri yapısı kullanılmıştır:
 
-\subsection{Çizge (Graph) Sınıfı}
-Çizge sınıfı, tüm çizge operasyonlarını yöneten ana sınıftır. Tepeler ve bunların bağlantılarını içerir. Ayrıca çizge türünü (matris veya liste) belirten bir özelliğe sahiptir (bkz. Ek A.1).
+\subsubsection{Tepe (Vertex) Sınıfı}
+Tepe sınıfı, çizgedeki her bir düğümü temsil eder:
+\begin{itemize}
+    \item \texttt{label}: Tepenin etiketi (string)
+    \item \texttt{neighbors}: Komşu tepelerin kümesi (Set[str])
+\end{itemize}
 
-\section{Çizge Girdi/Çıktı İşlemleri}
-Proje iki farklı formatta çizge girişini desteklemektedir (bkz. Ek A.2):
+Python'un \texttt{dataclass} özelliği kullanılarak implement edilmiştir. Bu sayede sınıf otomatik olarak \texttt{\_\_init\_\_}, \texttt{\_\_repr\_\_} ve \texttt{\_\_eq\_\_} metodlarına sahip olur.
 
-\subsection{Komşuluk Matrisi Formatı}
-Komşuluk matrisi formatında, çizge $n \times n$ boyutunda bir matris ile temsil edilir. Matrisin $[i,j]$ elemanı, $i$ ve $j$ tepeleri arasında kenar varsa 1, yoksa 0 değerini alır.
+\subsubsection{Çizge (Graph) Sınıfı}
+Ana çizge sınıfı şu özelliklere sahiptir:
+\begin{itemize}
+    \item \texttt{vertices}: Tepeler sözlüğü (Dict[str, Vertex])
+    \item \texttt{input\_type}: Giriş formatı (Matrix/List)
+\end{itemize}
 
-\subsection{Komşuluk Listesi Formatı}
-Komşuluk listesi formatında, her tepe için o tepenin komşuları listelenir. Bu format, özellikle seyrek çizgeler için daha verimlidir.
+\section{Algoritmalar ve Analiz Metodları}
 
-\section{Özel Çizge Türleri}
-Proje aşağıdaki özel çizge türlerinin oluşturulmasını desteklemektedir (bkz. Ek A.3):
+\subsection{Çizge Türü Belirleme}
+\texttt{determine\_graph\_type} metodu, bir çizgenin özel türlerden biri olup olmadığını kontrol eder:
 
-\subsection{Tam Çizge ($K_n$)}
-$n \geq 1$ için tam çizge, her tepenin diğer tüm tepelere bağlı olduğu çizgedir. $n$ tepeli tam çizgede $\frac{n(n-1)}{2}$ kenar vardır.
-
-\subsection{Döngü Çizge ($C_n$)}
-$n \geq 3$ için döngü çizge, $n$ tepenin bir döngü oluşturacak şekilde birbirine bağlandığı çizgedir. Her tepenin derecesi 2'dir.
-
-\subsection{Çark Çizge ($W_n$)}
-$n \geq 3$ için çark çizge, $n-1$ tepeli bir döngü çizgeye bir merkez tepenin tüm tepelere bağlanmasıyla oluşur.
-
-\subsection{n-Küp Çizge ($Q_n$)}
-$n \geq 1$ için n-küp çizge, tepeleri $n$ bitlik ikili sayılarla etiketlenen ve Hamming uzaklığı 1 olan tepelerin birbirine bağlandığı çizgedir.
-
-\section{Çizge Analizi}
-Proje aşağıdaki analiz fonksiyonlarını içermektedir (bkz. Ek A.4):
-
-\subsection{Soyutlanmış Tepeler}
-Hiçbir kenarı olmayan tepelerin bulunması için kullanılır. Bu tepelerin derecesi 0'dır.
-
-\subsection{Asılı Tepeler}
-Sadece bir kenarı olan tepelerin bulunması için kullanılır. Bu tepelerin derecesi 1'dir.
+\begin{algorithm}
+\caption{Çizge Türü Belirleme}
+\begin{algorithmic}
+\STATE \textbf{Input:} Graph G
+\STATE \textbf{Output:} (is\_complete, is\_cycle, is\_wheel, is\_hypercube)
+\STATE
+\STATE // Tam çizge kontrolü
+\IF{her tepenin derecesi (n-1) ise}
+    \STATE is\_complete = true
+\ENDIF
+\STATE
+\STATE // Döngü çizge kontrolü
+\IF{n $\geq$ 3 ve her tepenin derecesi 2 ve çizge bağlı ise}
+    \STATE is\_cycle = true
+\ENDIF
+\STATE
+\STATE // Çark çizge kontrolü
+\IF{n $\geq$ 4}
+    \STATE merkez = derece(n-1) olan tepe
+    \IF{merkez varsa ve kalan tepeler döngü oluşturuyorsa}
+        \STATE is\_wheel = true
+    \ENDIF
+\ENDIF
+\STATE
+\STATE // n-küp çizge kontrolü
+\IF{n = 2\^{}k ve her tepenin derecesi k ise}
+    \STATE is\_hypercube = true
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{İki Parçalı Çizge Kontrolü}
-Çizgenin iki parçalı olup olmadığının kontrolü ve kümelerin bulunması için BFS tabanlı bir renklendirme algoritması kullanılmıştır.
+İki parçalı çizge kontrolü için BFS tabanlı bir renklendirme algoritması kullanılmıştır:
 
-\subsection{Bağlılık Analizi}
-Çizgenin bağlı olup olmadığının kontrolü ve bağlı bileşenlerin bulunması için BFS algoritması kullanılmıştır.
+\begin{algorithm}
+\caption{İki Parçalı Çizge Kontrolü}
+\begin{algorithmic}
+\STATE \textbf{Input:} Graph G
+\STATE \textbf{Output:} (is\_bipartite, (set1, set2))
+\STATE
+\STATE colors = \{\} // Tepe → renk (0 veya 1)
+\FOR{her başlangıç tepesi v}
+    \IF{v renklendirilmemişse}
+        \STATE queue = [(v, 0)]
+        \WHILE{queue boş değil}
+            \STATE vertex, color = queue.pop()
+            \IF{vertex renklendirilmişse}
+                \IF{rengi farklıysa}
+                    \RETURN (false, None)
+                \ENDIF
+                \STATE continue
+            \ENDIF
+            \STATE vertex'i color ile renklendir
+            \STATE komşuları karşıt renkle queue'ya ekle
+        \ENDWHILE
+    \ENDIF
+\ENDFOR
+\STATE set0 = rengi 0 olan tepeler
+\STATE set1 = rengi 1 olan tepeler
+\RETURN (true, (set0, set1))
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Bağlı Bileşenler}
+Çizgenin bağlı bileşenlerini bulmak için BFS algoritması kullanılmıştır:
+
+\begin{algorithm}
+\caption{Bağlı Bileşenleri Bulma}
+\begin{algorithmic}
+\STATE \textbf{Input:} Graph G
+\STATE \textbf{Output:} List[Set[str]] (bağlı bileşenler listesi)
+\STATE
+\STATE unvisited = tüm tepeler
+\STATE components = []
+\WHILE{unvisited boş değil}
+    \STATE start = unvisited'dan bir tepe seç
+    \STATE component = \{\}
+    \STATE queue = [start]
+    \WHILE{queue boş değil}
+        \STATE vertex = queue.pop()
+        \IF{vertex ziyaret edilmemişse}
+            \STATE component'e ekle
+            \STATE unvisited'dan çıkar
+            \STATE ziyaret edilmemiş komşuları queue'ya ekle
+        \ENDIF
+    \ENDWHILE
+    \STATE components'e component'i ekle
+\ENDWHILE
+\RETURN components
+\end{algorithmic}
+\end{algorithm}
+
+\section{Performans Analizi}
+Algoritmaların karmaşıklık analizi:
+
+\begin{itemize}
+    \item \textbf{Çizge Türü Belirleme}: O(V + E)
+    \item \textbf{İki Parçalı Kontrol}: O(V + E)
+    \item \textbf{Bağlı Bileşenler}: O(V + E)
+    \item \textbf{Tam İki Parçalı Kontrol}: O(V\^{}2)
+\end{itemize}
+
+Burada V tepe sayısını, E kenar sayısını göstermektedir.
 
 \section{Test ve Doğrulama}
-Proje kapsamlı bir test paketi içermektedir. unittest modülü kullanılarak yazılan testler, tüm fonksiyonların doğru çalıştığını doğrular. Test senaryoları şunları içerir:
+Proje kapsamlı bir test paketi içermektedir. unittest modülü kullanılarak yazılan testler şunları içerir:
+
 \begin{itemize}
-    \item Özel çizge türlerinin doğru oluşturulması
-    \item Çizge özelliklerinin doğru analizi
-    \item Dosya okuma/yazma işlemlerinin doğruluğu
+    \item \textbf{Özel Çizge Testleri}:
+    \begin{itemize}
+        \item Tam çizge (Kn) oluşturma ve doğrulama
+        \item Döngü çizge (Cn) oluşturma ve doğrulama
+        \item Çark çizge (Wn) oluşturma ve doğrulama
+        \item n-küp çizge (Qn) oluşturma ve doğrulama
+    \end{itemize}
+    \item \textbf{Çizge Özellikleri Testleri}:
+    \begin{itemize}
+        \item Soyutlanmış tepe bulma
+        \item Asılı tepe bulma
+        \item Bağlılık kontrolü
+        \item İki parçalı çizge kontrolü
+    \end{itemize}
+    \item \textbf{Dosya İşlemleri Testleri}:
+    \begin{itemize}
+        \item Matris formatı okuma/yazma
+        \item Liste formatı okuma/yazma
+    \end{itemize}
 \end{itemize}
 
 \section{Sonuç}
-Bu projede, çizge kuramının temel kavramları Python programlama dili kullanılarak başarıyla uygulanmıştır. Proje, çizgelerin oluşturulması, analizi ve manipülasyonu için gerekli tüm temel işlevleri içermektedir. Özellikle, farklı çizge türlerinin oluşturulması ve analizi için gerekli algoritmalar başarıyla implement edilmiştir.
+Bu projede, çizge kuramının temel kavramları Python programlama dili kullanılarak başarıyla uygulanmıştır. Özellikle:
 
-Projenin tüm kaynak kodları ve testleri GitHub üzerinde paylaşılmıştır. Proje, çizge kuramı konusunda eğitim ve araştırma amaçlı kullanılabilir.
+\begin{itemize}
+    \item Farklı çizge türlerinin oluşturulması ve analizi
+    \item Verimli veri yapıları ve algoritmalar
+    \item Kapsamlı test ve doğrulama
+    \item Detaylı dokümantasyon
+\end{itemize}
+
+başarıyla gerçekleştirilmiştir. Proje, çizge kuramı konusunda eğitim ve araştırma amaçlı kullanılabilir.
 
 \appendix
 \section{Kaynak Kodları}
-Projenin tam kaynak kodları ayrı bir dokümanda (code\_appendix.tex) verilmiştir. Bu bölümde kaynak kodların ana bölümleri ve önemli fonksiyonları listelenmiştir.
+Projenin tam kaynak kodları ayrı bir dokümanda (code\_appendix.tex) verilmiştir.
 
 \end{document}
