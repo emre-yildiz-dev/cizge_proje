@@ -1,0 +1,5 @@
+List
+a b d
+b a c d
+c b
+d a b
