@@ -1,0 +1,109 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[turkish]{babel}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+% Code listing settings
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!60!black},
+    numbers=left,
+    numberstyle=\tiny,
+    numbersep=5pt,
+    frame=single,
+    breaklines=true,
+    breakatwhitespace=true,
+    showstringspaces=false,
+}
+
+\title{Bilgisayar Uygulamalarında Çizge Kuramı Projesi}
+\author{Emre Yıldız}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Bu projede, çizge kuramının temel kavramlarını Python programlama dili kullanarak uyguladık. Proje, çizgelerin oluşturulması, analizi ve manipülasyonu için gerekli temel işlevleri içermektedir. Özellikle, tam çizge, döngü çizge, çark çizge ve n-küp çizge gibi özel çizge türlerinin oluşturulması ve analizi için gerekli algoritmalar implement edilmiştir. Projede herhangi bir harici kütüphane kullanılmamıştır.
+\end{abstract}
+
+\tableofcontents
+
+\section{Giriş}
+Çizge kuramı, matematiğin önemli alanlarından biridir ve bilgisayar bilimlerinde geniş uygulama alanına sahiptir. Bu projede, çizge kuramının temel kavramlarını Python programlama dilinde uygulayarak, çizgelerin oluşturulması, analizi ve manipülasyonu için bir yazılım kütüphanesi geliştirdik.
+
+\section{Veri Yapıları}
+Projede kullanılan temel veri yapıları şunlardır:
+
+\subsection{Tepe (Vertex) Sınıfı}
+Tepe sınıfı, çizgedeki her bir düğümü temsil eder. Her tepenin bir etiketi ve komşu tepeler kümesi vardır. Python'un dataclass özelliği kullanılarak implement edilmiştir (bkz. Ek A.1).
+
+\subsection{Çizge (Graph) Sınıfı}
+Çizge sınıfı, tüm çizge operasyonlarını yöneten ana sınıftır. Tepeler ve bunların bağlantılarını içerir. Ayrıca çizge türünü (matris veya liste) belirten bir özelliğe sahiptir (bkz. Ek A.1).
+
+\section{Çizge Girdi/Çıktı İşlemleri}
+Proje iki farklı formatta çizge girişini desteklemektedir (bkz. Ek A.2):
+
+\subsection{Komşuluk Matrisi Formatı}
+Komşuluk matrisi formatında, çizge $n \times n$ boyutunda bir matris ile temsil edilir. Matrisin $[i,j]$ elemanı, $i$ ve $j$ tepeleri arasında kenar varsa 1, yoksa 0 değerini alır.
+
+\subsection{Komşuluk Listesi Formatı}
+Komşuluk listesi formatında, her tepe için o tepenin komşuları listelenir. Bu format, özellikle seyrek çizgeler için daha verimlidir.
+
+\section{Özel Çizge Türleri}
+Proje aşağıdaki özel çizge türlerinin oluşturulmasını desteklemektedir (bkz. Ek A.3):
+
+\subsection{Tam Çizge ($K_n$)}
+$n \geq 1$ için tam çizge, her tepenin diğer tüm tepelere bağlı olduğu çizgedir. $n$ tepeli tam çizgede $\frac{n(n-1)}{2}$ kenar vardır.
+
+\subsection{Döngü Çizge ($C_n$)}
+$n \geq 3$ için döngü çizge, $n$ tepenin bir döngü oluşturacak şekilde birbirine bağlandığı çizgedir. Her tepenin derecesi 2'dir.
+
+\subsection{Çark Çizge ($W_n$)}
+$n \geq 3$ için çark çizge, $n-1$ tepeli bir döngü çizgeye bir merkez tepenin tüm tepelere bağlanmasıyla oluşur.
+
+\subsection{n-Küp Çizge ($Q_n$)}
+$n \geq 1$ için n-küp çizge, tepeleri $n$ bitlik ikili sayılarla etiketlenen ve Hamming uzaklığı 1 olan tepelerin birbirine bağlandığı çizgedir.
+
+\section{Çizge Analizi}
+Proje aşağıdaki analiz fonksiyonlarını içermektedir (bkz. Ek A.4):
+
+\subsection{Soyutlanmış Tepeler}
+Hiçbir kenarı olmayan tepelerin bulunması için kullanılır. Bu tepelerin derecesi 0'dır.
+
+\subsection{Asılı Tepeler}
+Sadece bir kenarı olan tepelerin bulunması için kullanılır. Bu tepelerin derecesi 1'dir.
+
+\subsection{İki Parçalı Çizge Kontrolü}
+Çizgenin iki parçalı olup olmadığının kontrolü ve kümelerin bulunması için BFS tabanlı bir renklendirme algoritması kullanılmıştır.
+
+\subsection{Bağlılık Analizi}
+Çizgenin bağlı olup olmadığının kontrolü ve bağlı bileşenlerin bulunması için BFS algoritması kullanılmıştır.
+
+\section{Test ve Doğrulama}
+Proje kapsamlı bir test paketi içermektedir. unittest modülü kullanılarak yazılan testler, tüm fonksiyonların doğru çalıştığını doğrular. Test senaryoları şunları içerir:
+\begin{itemize}
+    \item Özel çizge türlerinin doğru oluşturulması
+    \item Çizge özelliklerinin doğru analizi
+    \item Dosya okuma/yazma işlemlerinin doğruluğu
+\end{itemize}
+
+\section{Sonuç}
+Bu projede, çizge kuramının temel kavramları Python programlama dili kullanılarak başarıyla uygulanmıştır. Proje, çizgelerin oluşturulması, analizi ve manipülasyonu için gerekli tüm temel işlevleri içermektedir. Özellikle, farklı çizge türlerinin oluşturulması ve analizi için gerekli algoritmalar başarıyla implement edilmiştir.
+
+Projenin tüm kaynak kodları ve testleri GitHub üzerinde paylaşılmıştır. Proje, çizge kuramı konusunda eğitim ve araştırma amaçlı kullanılabilir.
+
+\appendix
+\section{Kaynak Kodları}
+Projenin tam kaynak kodları ayrı bir dokümanda (code\_appendix.tex) verilmiştir. Bu bölümde kaynak kodların ana bölümleri ve önemli fonksiyonları listelenmiştir.
+
+\end{document}
